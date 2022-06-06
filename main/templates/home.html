@@ -1,0 +1,89 @@
+{% extends 'base_non_logo.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+{% if user.is_authenticated %}
+    <input type="checkbox" id="menuicon">
+    <label for="menuicon">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+    <div class="sidebar">
+        <ul class="nav-links">
+            <li>
+                <a style="color:#fff; cursor:default;">{{user.name}}</a>
+                <span style="cursor:default;">님 안녕하세요.</span>
+            </li>
+            <li>
+                <a href="{% url 'main:osvos' %}" class="link">Image Segmentation</a>        
+            </li>
+            <li>
+                <a href="{% url 'main:board' %}" class="link">게시판</a>        
+            </li>
+            <li>
+                <a href="{% url 'main:mypost' %}" class="link">나의 게시글</a>
+            </li>
+        </ul>        
+        <ul class="nav-login">
+            <li>
+                <a href="{% url 'main:mypage' %}" class="link" style="font-size: 1.2rem;">마이페이지</a>
+            </li>
+            <li>
+                <a href="{% url 'main:logout' %}" class="link">로그아웃</a>
+            </li>
+        </ul>        
+    </div>
+{% else %}
+    <input type="checkbox" id="menuicon">
+    <label for="menuicon">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+    <div class="sidebar">
+        <ul class="nav-links">
+            <li>
+                <span style="text-align:left; cursor:default;">로그인이 필요합니다.</span>
+            </li>
+            <li>
+                <a href="{% url 'main:login' %}" class="link">Image Segmentation</a>
+            </li>
+            <li>
+                <a href="{% url 'main:login' %}" class="link">게시판</a>
+            </li>
+        </ul>
+        <div class="nav-login">
+            <li>
+                <a href="{% url 'main:login' %}" class="link">로그인</a>
+            </li>
+            <li>
+                <a href="{% url 'main:signup' %}" class="link">회원가입</a>
+            </li>
+        </div>
+    </div>
+{% endif %}
+<div class="wrapper" style="text-align: center;">
+    <div class="content" style="text-align: center;">
+        <img class="image" src="/static/image/chromakey_logo.png" width="288px;">
+        <h2 style="color:gray; margin-top:6px; font-size: 16px">당신의 모델 학습 데이터를 보조하겠습니다.</h2>
+        <div style="margin-top:15px">
+            {% if user.is_authenticated %}
+                <div>
+                    <button style="background-color: #096D7F; border:none;" class="btn btn-primary" onclick="location.href='{% url 'main:osvos' %}'">Image segmentation start</button>
+                </div>
+            {% else %}
+                <div>
+                    <button style="background-color: #708ae8; border:none;" class="btn btn-primary" onclick="location.href='{% url 'main:login' %}'">로그인</button>
+                </div>
+                <div>
+                    <button style="background-color: #708ae8; border:none;" class="btn btn-primary" onclick="location.href='{% url 'main:signup' %}'">회원가입</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

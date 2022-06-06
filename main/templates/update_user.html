@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/update_user.css' %}">
+
+<section class="change-area">
+    <div class="change-card">
+        <form action="" method="post" style="text-align: center;" name="form">
+            {% csrf_token %}
+            <div>
+                <h2 style="cursor:default;">개인정보 수정</h2>
+            </div>
+            <div>
+                <ul class= "password">
+                    <li>
+                        <p>이름</p>
+                        <input type="name" name="name" id="name" class="form-control" 
+                            placeholder="이름" value="{{ form.name.value|default_if_none:'' }}"/>
+                    </li>
+                    <li>
+                        <p>전화번호</p>
+                        <input type="phone" name="phone" id="phone" class="form-control" 
+                            placeholder="전화번호" value="{{ form.phone.value|default_if_none:'' }}"/>
+                    </li>
+                    <li>
+                        <p>이메일</p>
+                        <input type="email" name="email" id="email" class="form-control" 
+                            placeholder="이메일" value="{{ form.email.value|default_if_none:'' }}"/>
+                    </li>
+                </ul>
+            </div>
+            <button type="button" class="base-button" style="background-color: #708ae8; border:none;" onclick="btn();">수정완료</button>
+            <script language="JavaScript" type="text/javascript">
+                function btn() 
+                {
+                    if (confirm("수정하시겠습니까?")==true){
+                        document.form.submit();
+                        alert("수정이 완료되었습니다.");
+                        
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            </script>
+        </form>
+    </div>
+</section>
+{% endblock %}

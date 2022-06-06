@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/board.css' %}">
+
+<div class="board-area">
+    <div class="container">
+        <div>
+            <h2 style="cursor:default;">자유게시판</h2>
+        </div>
+
+        <div class="board">
+            <table class="table table-hover">
+                <thead>
+                <tr style="cursor:default;">
+                    <th scope="col" style="width: 8%;">번호</th>
+                    <th scope="col" style="width: 52%;">제목</th>
+                    <th scope="col" style="width: 16%;">작성자</th>
+                    <th scope="col" style="width: 16%;">작성일</th>
+                    <th scope="col" style="width: 8%;">조회수</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% if page_obj %}
+                            {% for board_list in page_obj %}
+                    <tr class="{% cycle '' 'even_bgcolor' %}">
+                        <td scope="row" class="post-id">{{ board_list.id }}</td>
+                        <td class="post-title" onclick="location.href='{% url 'main:detail' board_list.id %}'" style="padding-left: 16px;">
+
+                                {{ board_list.title }}  {% if board_list.reply_set.count > 0 %} [{{ board_list.reply_set.count }}] {% endif %}
+
+                        </td>
+                        <td>{{ board_list.user }}</td>
+                        <td>{{ board_list.pub_date|date:'Y-m-d' }}</td>
+                        <td>{{ board_list.hits }}</td>
+                    </tr>
+                    {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td></td>
+                                <td style="text-align:right;">작성된 게시글이 없습니다.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class='btn-area'>
+            <!-- 페이징처리 -->
+            <div id="paging">
+                <ul class="pagination justify-content-center">
+                    <!-- 이전페이지 -->
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="./?&page=1">맨 앞으로</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="./?&page={{ page_obj.previous_page_number }}">이전</a>
+                        <!-- href로 뎁스 설정 -->
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+                    </li>
+                    {% endif %}
+                    <!-- 페이지리스트 -->
+                    {% for page_number in page_obj.paginator.page_range %}
+                        {% if page_number >= page_obj.number|add:-2 and page_number <= page_obj.number|add:2 %}
+                        <span class="{% if page_number == page_obj.number %}current{% endif %}" style="background-color: #708ae8;">
+                            {% if page_number == page_obj.number %}
+                                <li class="page-item active" aria-current="page">
+                                    <a class="page-link" href="./?&page={{ page_number }}">{{ page_number }}</a>
+                                </li>
+                            {% else %}
+                                <a class="page-link" href="./?&page={{ page_number }}">{{ page_number }}</a>
+                            {% endif %}
+                        </span>
+                        {% elif page_number >= page_obj.number|add:-3 and page_number <= page_obj.number|add:3 %}
+                            ..
+                        {% endif %}
+                    {% endfor %}
+                    <!-- 다음페이지 -->
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="./?&page={{ page_obj.next_page_number }}">다음</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="./?&page={{ page_obj.paginator.num_pages }}">맨 뒤로</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- 페이징처리 끝 -->
+
+            {% if user.is_authenticated %}
+            <div>
+                <button  style="background-color: #708ae8; border:none;" class="btn btn-primary" onclick="location.href='{% url 'main:mypost' %}'">나의 게시글</button>
+                <button  style="background-color: #708ae8; border:none;" class="btn btn-primary" onclick="location.href='{% url 'main:write' %}'">글쓰기</button>
+            </div>
+            {% else %}
+            <div>
+                <button  style="background-color: #708ae8; border:none;" class="btn btn-primary" onclick="location.href='{% url 'main:login' %}'">글쓰기</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

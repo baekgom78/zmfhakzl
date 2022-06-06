@@ -1,0 +1,26 @@
+{% extends 'base_non_logo.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+<div class="wrapper" style="text-align: center;" >
+  <div class="content">
+    {% if user.is_authenticated %}
+      <img src="/static/image/chromakey_logo.png"width="288px" class="center-block" onclick="location.href='{% url 'main:home' %}'">
+    {% else %}
+      <img src="/static/image/chromakey_logo.png"width="288px" class="center-block" onclick="location.href='{% url 'main:login' %}'">
+    {% endif %}
+    <h2 style="color:gray; margin-top:6px; font-size: 16px">당신의 모델 학습 데이터를 보조하겠습니다.</h2>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
