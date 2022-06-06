@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+
+<div class="board-area">
+    <div class="container">
+        <div>
+            <h2 style="cursor:default;">마이페이지</h2>
+        </div>
+        <div>
+            <ul class="board">
+                <li>
+                    <p>이름</p>
+                    <input type="text" name="name" id="name" value="{{ user.name }}" readonly/>
+                </li>
+                <li>
+                    <p>전화번호</p>
+                    <input type="tel" id="phone" value="{{ user.phone }}" readonly/>
+                </li>
+                <li>
+                    <p>이메일</p>
+                    <input type="email" id="email" value="{{ user.email }}" readonly/>
+                </li>
+                <li>
+                    <p>아이디</p>
+                    <input type="text" id="id" value="{{ user.username }}" readonly/>
+                </li>
+                <li>
+                    <p>비밀번호</p>
+                    <div class="pw-area">
+                        <span class="pw-btn" onclick="location.href='{% url 'main:change_password' %}'">비밀번호 변경하기</span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="btn-area">
+                <li>
+                    <button class="base-button" onclick="location.href='{% url 'main:update_user' %}'">개인정보수정</button>
+                </li>
+                <li>
+                    <button class="opposite-button" type="button" onclick="location.href='{% url 'main:logout' %}'">로그아웃</button>
+                </li>
+                <li>
+                    <button class="opposite-button" type="button" onclick="btn();">회원탈퇴</button>
+                </li>
+            </ul>           
+        </div>
+    </div>
+    <script>
+        function btn(){
+            if (confirm("정말 탈퇴하시겠습니까?")==true){
+                alert("회원 탈퇴가 완료되었습니다.");
+                location.href='{% url 'main:delete_user' %}'
+            }else{
+                return false;
+            }
+        }
+    </script>
+</div>
+{% endblock %}
