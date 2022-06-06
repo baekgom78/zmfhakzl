@@ -28,6 +28,15 @@ var currentLineWidth = radius * 2;
 // 학습
 let isTrainOK = false;
 
+//승훈 추가
+let bHanding = false; // 핸딩 토글 기준
+const fixed_w = 800;
+const fixed_h = 600;
+
+//모달에서 이미지 선택
+let pickedN = -1;
+
+
 // 그림판 그리기
 function setColor(color) {
     currentSelectedColor = color;
@@ -38,6 +47,7 @@ function setColor(color) {
 }
 
 function setSwatch(e) {
+    bHanding = false;
     bErasing = false;
     var swatch = e.target;
 
@@ -73,13 +83,13 @@ buttonclear.addEventListener('click', clearImage);
 
 function clearImage() {
     // 비디오 업로드 사전 체크
-    if(isDivideVideo == false){
+    if (isDivideVideo == false) {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if (previousCanvasId == 0) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
-        return ;
+        return;
     }
 
     const currentCanvas = document.getElementById("canvas-drawing-" + previousCanvasId);
@@ -95,17 +105,32 @@ function clearImage() {
     currentContext.strokeStyle = currentFillStyle;
 };
 
-function eraserImage() {
+function handImage() {
     // 비디오 업로드 사전 체크
-    if(isDivideVideo == false){
+    if (isDivideVideo == false) {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if (previousCanvasId == 0) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
-        return ;
+        return;
+    }
+    bHanding = !bHanding;
+    bErasing = false;
+};
+
+function eraserImage() {
+    // 비디오 업로드 사전 체크
+    if (isDivideVideo == false) {
+        alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
+        return;
+    }
+    if (previousCanvasId == 0) {
+        alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
+        return;
     }
     bErasing = !bErasing;
+    bHanding = false;
 };
 
 var button = document.getElementById('save');
@@ -113,20 +138,20 @@ button.addEventListener('click', saveImage);
 
 function saveImage(el) {
     // 비디오 업로드 사전 체크
-    if(isDivideVideo == false){
+    if (isDivideVideo == false) {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if (previousCanvasId == 0) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
-        return ;
+        return;
     }
     bErasing = true;
-    
-    var canvas = document.getElementById("canvas-drawing-" + previousCanvasId);
+
+    var canvas = document.getElementById("canvas-combined-" + previousCanvasId);
     const link = document.createElement('a');
     const labelName = document.getElementById('label_name').innerHTML;
-    if(labelName == null){
+    if (labelName == null) {
         labelName = "object";
     }
 
@@ -137,7 +162,6 @@ function saveImage(el) {
 
     var canvasImage = document.getElementById("imgViewer");
     const linkImage = document.createElement('a');
-    
     console.log("labelName: ", labelName);
     linkImage.download = labelName + "-image-" + previousCanvasId + ".png";
     linkImage.href = canvasImage.toDataURL();
@@ -146,34 +170,38 @@ function saveImage(el) {
 
 };
 
-function initDrawingBoard(){
+function initDrawingBoard() {
     var colors = ['red', 'pink', 'yellow', 'yellowgreen', 'green', 'cyan']; //Color array to select from
-    
+
     for (var i = 0, n = colors.length; i < n; i++) {
+        var swatchbox = document.createElement('div');
+        swatchbox.className = "swatchbox";
+        document.getElementById('colors').appendChild(swatchbox);
+
         var swatch = document.createElement('nav');
         swatch.className = 'swatch';
         swatch.style.backgroundColor = colors[i];
         swatch.addEventListener('click', setSwatch);
-        document.getElementById('colors').appendChild(swatch);
+        swatchbox.appendChild(swatch);
     }
 }
 
-function checkVideoLoading(){
-    if(isDivideVideo == false){
+function checkVideoLoading() {
+    if (isDivideVideo == false) {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if (previousCanvasId == 0) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
-        return ;
+        return;
     }
 }
 
 // 사용자 업로드 영상 불러오기
-function loadUploadVideo(evt){
+function loadUploadVideo(evt) {
     console.log("1. loadUploadVideo");
     file = evt.target.files[0];
-    
+
     // 1) Information 정보 추가
     setInformation(file);
 
@@ -247,9 +275,9 @@ async function divideVideo(){
                 if (value) {
                     const bitmap = await createImageBitmap(value);
                     const index = frames.length;
-                    
+
                     frames.push(bitmap);
-        
+
                     select.append(new Option("Frame #" + (index + 1), index));
                     createImageList(index, bitmap);
                     setInformationTotalFrmae(index);
@@ -269,7 +297,7 @@ async function divideVideo(){
 }
 
 // 컨트롤 바 속 이미지들 집합
-function createImageList(index, bitmap){
+function createImageList(index, bitmap) {
     //  <li>
     //      <canvas></canvas>
     //      <p>frame-idx</p>
@@ -279,7 +307,6 @@ function createImageList(index, bitmap){
     const imageItem = document.createElement("li");
     imageItem.setAttribute("id", "frame-" + (index + 1));
     imageItem.setAttribute("class", "image-item");
-    
     imageItem.onclick = onClickSpecificFrame;
 
     // canvas 태그
@@ -288,7 +315,6 @@ function createImageList(index, bitmap){
     imageCanvas.height = 100;
     const imageCtx = imageCanvas.getContext("2d");
     imageCtx.drawImage(bitmap, 0, 0, 120, 100);
- 
 
     // p 태그
     const imageId = document.createElement("p");
@@ -326,21 +352,91 @@ function define_tag() {
 }
 
 // object 이름 지정 위한 모달 OFF
-function modalOff(){
+function modalOff() {
     modal.style.display = "none"
 }
 
 // 사진만 띄우는 canvas 사전 선언
-function baseImageViewer(){
+function baseImageViewer() {
     canvasImage = document.getElementById("imgViewer");
     ctxImage = canvasImage.getContext("2d");
 }
+//모달에 추천 이미지 6장 불러오기
+async function loadingRecommendImage(){
+    let idx = 1;
+    const modal_w = 360;
+    const modal_h = 300;
+
+
+    for(let i =0; i<2; i++){
+
+        const rowdiv = document.createElement("div");
+        rowdiv.setAttribute("class", "rowdiv");
+
+        for(let j =0; j<3; j++){
+            let tempimage = new Image();
+            tempimage.src = '/static/image/testimg.png';
+
+            const imageItem = document.createElement("li");
+            imageItem.setAttribute("id", "rec_frame-" + (idx));
+            imageItem.setAttribute("class", "rec-item");
+
+            // canvas 태그
+            const imageCanvas = document.createElement("canvas");
+            imageCanvas.setAttribute("class", "not_picked");
+            imageCanvas.width = modal_w;
+            imageCanvas.height = modal_h;
+            imageCanvas.value = idx;
+            imageCanvas.addEventListener('click', pickedImage);
+
+            const imageCtx = imageCanvas.getContext("2d");
+            tempimage.onload = async function() {
+                imageCtx.drawImage(tempimage, 0, 0, modal_w, modal_h);
+             };
+
+            imageItem.append(imageCanvas);
+            rowdiv.append(imageItem);
+
+            idx++;
+        }
+        // div 안에 넣기
+        const imageListUl = document.getElementById("recommend_body");
+        imageListUl.append(rowdiv);
+
+    }
+
+}
+
+// 클릭할 때
+function pickedImage(e){
+    let pickedcanvas = e.target;
+    pickedN = pickedcanvas.value;
+
+    var picked = document.getElementsByClassName('picked')[0];
+    if (picked) {
+        picked.className = 'not_picked';
+    }
+    pickedcanvas.className = 'picked';
+}
 
 // 각 프레임 별 canvas 생성
-function createCanvas(bitmapWidth, bitmapHeight){
+function createCanvas(bitmapWidth, bitmapHeight) {
     const liTag = document.createElement('li');
+    //zoom 변수 추가
+    let cameraZoom = 1
+    let MAX_ZOOM = 5
+    let MIN_ZOOM = 0.1
+    const SCROLL_SENSITIVITY = 0.0005
+
+    //move 변수 추가
+    let cameraOffset = { x: 0, y: 0 }
+    let dragStart = { x: 0, y: 0 }
+
 
     liTag.className = "drawArea";
+    // liTag.style.maxWidth = "1280px";
+    // liTag.style.maxHeight = "720px";
+    // liTag.style.overflow = "scroll";
     liTag.style.position = "absolute";
     liTag.style.zIndex = 2;
     liTag.style.display = "none";
@@ -350,12 +446,34 @@ function createCanvas(bitmapWidth, bitmapHeight){
 
     const context = predefinedCanvas.getContext("2d");
 
-    predefinedCanvas.width = bitmapWidth;
-    predefinedCanvas.height = bitmapHeight;
+    predefinedCanvas.width = fixed_w;
+    predefinedCanvas.height = fixed_h;
+
+    //그림 저장 canvas
+    const combinedCanvas = document.createElement("canvas");
+    combinedCanvas.setAttribute("id", "canvas-combined-" + document.getElementById("drawAreaStack").childNodes.length);
+    combinedCanvas.style.border = "none";
+    combinedCanvas.style.display = "none";
+
+    const combinedctx = combinedCanvas.getContext("2d");
+
+    combinedCanvas.width = bitmapWidth;
+    combinedCanvas.height = bitmapHeight;
+
+
 
     /////////////////////////////////////////////////////
     var putPoint = function (e) {
-        if(bErasing){
+        if (bHanding) {
+            document.getElementById("hand-cursor").style.display = 'block';
+
+            document.getElementById("mouse-cursor").style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            const w = document.getElementById("mouse-cursor").style.width.split("px")[0];
+            const h = document.getElementById("mouse-cursor").style.height.split("px")[0];
+            document.getElementById("mouse-cursor").style.top = (e.offsetY - h / 2) + "px";
+            document.getElementById("mouse-cursor").style.left = (e.offsetX - w / 2) + "px";
+        } else if (bErasing) {
+            document.getElementById("hand-cursor").style.display = 'none';
             document.getElementById("mouse-cursor").style.width = currentLineWidth + "px";
             document.getElementById("mouse-cursor").style.height = currentLineWidth + "px";
             document.getElementById("mouse-cursor").style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
@@ -367,7 +485,8 @@ function createCanvas(bitmapWidth, bitmapHeight){
             document.getElementById("mouse-cursor").style.top = (e.offsetY - h / 2) + "px";
             document.getElementById("mouse-cursor").style.left = (e.offsetX - w / 2) + "px";
 
-        }else{
+        } else {
+            document.getElementById("hand-cursor").style.display = 'none';
             document.getElementById("mouse-cursor").style.width = currentLineWidth + "px";
             document.getElementById("mouse-cursor").style.height = currentLineWidth + "px";
             document.getElementById("mouse-cursor").style.backgroundColor = currentSelectedColor;
@@ -379,62 +498,125 @@ function createCanvas(bitmapWidth, bitmapHeight){
             document.getElementById("mouse-cursor").style.left = (e.offsetX - w / 2) + "px";
         }
 
-        if (dragging) {
-            context.lineTo(e.offsetX, e.offsetY);
-            context.stroke();
-            context.beginPath();
-            context.arc(e.offsetX, e.offsetY, radius, 0, Math.PI * 2);
-            context.fill();
-            context.beginPath();
+        if (bHanding && dragging) {
+            cameraOffset.x = getEventLocation(e).x / cameraZoom - dragStart.x
+            cameraOffset.y = getEventLocation(e).y / cameraZoom - dragStart.y
+            redraw(cameraZoom, predefinedCanvas, combinedCanvas, context, cameraOffset);
+        }
+        else if (dragging) {
+            // context.lineTo(e.offsetX, e.offsetY);
+            // context.stroke();
+            // context.beginPath();
+            // context.arc(e.offsetX, e.offsetY, radius, 0, Math.PI * 2);
+            // context.fill();
+            // context.beginPath();
+            // if (bErasing == true) {
+            //     context.globalCompositeOperation = "destination-out";
+            // } else {
+            //     context.globalCompositeOperation = "source-over";
+            // }
+            // combinedctx.moveTo(e.offsetX, e.offsetY);
+
+            let fixed_radius = (1 / cameraZoom) * radius;
+            let fixed_offsetX = (e.offsetX / cameraZoom) - cameraOffset.x;
+            let fixed_offsetY = (e.offsetY / cameraZoom) - cameraOffset.y;
+
+            // combinedctx.lineTo(e.offsetX, e.offsetY);
+            // combinedctx.stroke();
+            combinedctx.beginPath();
+            combinedctx.arc(fixed_offsetX, fixed_offsetY, fixed_radius, 0, Math.PI * 2);
+            combinedctx.fill();
+            combinedctx.beginPath();
             if (bErasing == true) {
-                context.globalCompositeOperation = "destination-out";
+                combinedctx.globalCompositeOperation = "destination-out";
             } else {
-                context.globalCompositeOperation = "source-over";
+                combinedctx.globalCompositeOperation = "source-over";
             }
-            context.moveTo(e.offsetX, e.offsetY);
+            // combinedctx.moveTo(e.offsetX, e.offsetY);
+
+            redraw(cameraZoom, predefinedCanvas, combinedCanvas, context, cameraOffset);
         }
     }
 
     var engage = function (e) {
-        const currentCanvas = document.getElementById("canvas-drawing-" + previousCanvasId);
-        const currentContext = currentCanvas.getContext("2d");
-
-        currentContext.fillStyle = currentSelectedColor;
-        currentContext.strokeStyle = currentSelectedColor;
-        currentContext.lineWidth = currentLineWidth;
 
         dragging = true;
-        putPoint(e);
+
+        //이동 일때
+        if (bHanding) {
+            dragStart.x = getEventLocation(e).x / cameraZoom - cameraOffset.x
+            dragStart.y = getEventLocation(e).y / cameraZoom - cameraOffset.y
+        } else {
+            const currentCanvas = document.getElementById("canvas-combined-" + previousCanvasId);
+            const currentContext = currentCanvas.getContext("2d");
+
+            currentContext.fillStyle = currentSelectedColor;
+            currentContext.strokeStyle = currentSelectedColor;
+            currentContext.lineWidth = currentLineWidth;
+
+            putPoint(e);
+        }
     }
 
     var disengage = function () {
         dragging = false;
-        context.beginPath();
+        combinedctx.beginPath();
     }
-    
+
     var canvasMouseEnter = function (e) {
         document.getElementById("mouse-cursor").style.display = 'block';
     }
 
-    var canvasMouseOver = function(e){
+    var canvasMouseOver = function (e) {
         document.getElementById("mouse-cursor").style.display = 'none';
+    }
+
+    var zoomin = function (zoomAmount, zoomFactor) {
+        const frame = frames[previousCanvasId];
+        let w = frame.width;
+        let h = frame.height;
+
+
+        if (!dragging) {
+            previousZoom = cameraZoom;
+
+            if (zoomAmount) {
+                cameraZoom += zoomAmount
+            }
+            else if (zoomFactor) {
+                cameraZoom = zoomFactor * lastZoom
+            }
+
+            cameraZoom = Math.min(cameraZoom, MAX_ZOOM)
+            cameraZoom = Math.max(cameraZoom, MIN_ZOOM)
+        }
+
+        if (w * cameraZoom <= fixed_w || h * cameraZoom <= fixed_h) {
+            cameraZoom = previousZoom;
+        } else {
+            redraw(cameraZoom, predefinedCanvas, combinedCanvas, context, cameraOffset);
+        }
     }
 
     predefinedCanvas.addEventListener('mousedown', engage);
     predefinedCanvas.addEventListener('mouseup', disengage);
     predefinedCanvas.addEventListener('mousemove', putPoint);
+    //zoom in,out function
+    predefinedCanvas.addEventListener('wheel', (e) => zoomin(e.deltaY * SCROLL_SENSITIVITY));
 
     predefinedCanvas.addEventListener('mouseenter', canvasMouseEnter);
     predefinedCanvas.addEventListener('mouseleave', canvasMouseOver);
-    
+
+
     /////////////////////////////////////////////////////
-    context.strokeStyle = 'red';
-    context.lineWidth = '30';
-    // context.lineCap = ctx.lineJoin = 'round';
-    context.lineCap = "round";
+    combinedctx.strokeStyle = 'red';
+    combinedctx.lineWidth = '30';
+    // combinedctx.lineCap = ctx.lineJoin = 'round';
+    combinedctx.lineCap = "round";
 
     // 3) li 태그들 -> ul 태그 넣기
     liTag.appendChild(predefinedCanvas);
+    liTag.appendChild(combinedCanvas);
 
     document.getElementById("drawAreaStack").appendChild(liTag);
 }
@@ -448,11 +630,12 @@ function onClickSpecificFrame(){
     changeInfromationNowFrame(clickFrameID);    // infromation 업데이트
 
     const currentCanvasId = clickFrameID.split('-')[1];
-    console.log(currentCanvasId)
     const frame = frames[currentCanvasId];
-    
-    canvasImage.width = frame.width;
-    canvasImage.height = frame.height;
+    // canvasImage.width = frame.width;
+    // canvasImage.height = frame.height;
+    // ctxImage.drawImage(frame, 0, 0);
+    canvasImage.width = fixed_w;
+    canvasImage.height = fixed_h;
     ctxImage.drawImage(frame, 0, 0);
 
     // previousCanvasId
@@ -460,13 +643,12 @@ function onClickSpecificFrame(){
     document.getElementById("canvas-drawing-" + currentCanvasId).parentNode.style.display = "block";
 
     previousCanvasId = currentCanvasId;
-    
 
     // 모델 예측 요청
     // predictObject();
 }
 
-function onClickSpecificFrameDegin(clickFrameID){
+function onClickSpecificFrameDegin(clickFrameID) {
     // 기존 선택된 frame 디자인 삭제
     if (selectedFrameItem != null) {
         selectedFrameItem.style.color = 'black';
@@ -479,7 +661,7 @@ function onClickSpecificFrameDegin(clickFrameID){
     selectedFrameItem.style.fontWeight = 600;
 }
 
-function changeInfromationNowFrame(clickFrameID){
+function changeInfromationNowFrame(clickFrameID) {
     const fileNow = document.querySelector("#label_now");
     fileNow.textContent = clickFrameID;
 }
@@ -894,6 +1076,7 @@ function predictvideo(){
 // 그림판 상단 컬러 선택 버튼 생성
 initDrawingBoard();
 baseImageViewer();
+loadingRecommendImage();
 
 // 파일 업로드 버튼 이벤트
 const uploadVideoButton = document.querySelector("#upload_video");
@@ -911,3 +1094,50 @@ btnOpenPopup.addEventListener('click', modalOpen)
 
 const closeBtn = modal.querySelector(".close-area");
 closeBtn.addEventListener('click', modalOff);
+
+
+
+function getEventLocation(e) {
+    if (e.touches && e.touches.length == 1) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    }
+    else if (e.clientX && e.clientY) {
+        return { x: e.clientX, y: e.clientY }
+    }
+}
+
+
+//redraw
+
+async function redraw(zoom, predefinedCanvas, combinedCanvas, context, cameraOffset) {
+
+    const frame = frames[previousCanvasId];
+    let w = frame.width;
+    let h = frame.height;
+
+
+    //축소 최대 크기
+
+    //Image Area
+    canvasImage.width = fixed_w;
+    canvasImage.height = fixed_h;
+
+
+    ctxImage.translate(0, 0)
+    ctxImage.scale(zoom, zoom)
+    ctxImage.translate(cameraOffset.x, cameraOffset.y)
+    ctxImage.drawImage(frame, 0, 0);
+
+
+    // // //Drawing Area
+
+    predefinedCanvas.width = fixed_w;
+    predefinedCanvas.height = fixed_h;
+
+    context.clearRect(0, 0, fixed_w, fixed_h)
+    context.translate(0, 0)
+    context.scale(zoom, zoom)
+    context.translate(cameraOffset.x, cameraOffset.y)
+    context.drawImage(combinedCanvas, 0, 0);
+
+}
