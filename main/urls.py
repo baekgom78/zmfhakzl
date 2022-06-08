@@ -9,6 +9,8 @@ urlpatterns = [
     # 메인페이지
     path('', views.index, name='index'),
     path('home/', views.home, name='home'),
+    # 소개페이지
+    path('introduce/', views.introduce, name='introduce'),
     # 로그인, 로그아웃
     path('home/login/', views.login, name='login'),
     path('home/logout/', views.logout, name='logout'),
