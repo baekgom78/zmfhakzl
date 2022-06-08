@@ -31,16 +31,17 @@ let isTrainOK = false;
 
 //승훈 추가
 let bHanding = false; // 핸딩 토글 기준
-const fixed_w = 800;
-const fixed_h = 600;
+
+let editbarRect = document.querySelector('.edit-bar').getBoundingClientRect();
+const fixed_w = editbarRect.width;
+const fixed_h = editbarRect.height;
 
 //모달에서 이미지 선택
 let pickedN = -1;
 
-<<<<<<< HEAD
 //현재시간 정보
 let nowtimeis;
-=======
+
 const datenow = Date.now();
 const dateyear = new Date(datenow);
 var year = dateyear.getFullYear().toString().slice(-2); //년도 뒤에 두자리
@@ -51,7 +52,6 @@ var minute = ("0" + dateyear.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 
 var second = ("0" + dateyear.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
 var returnDate = "20" + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second; 
 
->>>>>>> 14ba70f9e4c46d58f37412e4c8df9313f8738193
 
 // 그림판 그리기
 function setColor(color) {
@@ -394,7 +394,7 @@ async function loadingRecommendImage(){
             tempimage.src = '/static/image/testimg.png';
 
             const imageItem = document.createElement("li");
-            imageItem.setAttribute("id", "rec_frame-" + (idx));
+            imageItem.setAttribute("id", "rec_frame-" + (idx + 1));
             imageItem.setAttribute("class", "rec-item");
 
             // canvas 태그
@@ -857,12 +857,9 @@ function labelTag(){
     
     console.log("originImage: ", originBlob);
     console.log("labelImage: ", originBlob);
-<<<<<<< HEAD
     // nowtimeis = nowtime();
 
-=======
     nowtimeis = returnDate
->>>>>>> 14ba70f9e4c46d58f37412e4c8df9313f8738193
     // 3. FormData
     var frm = new FormData();
     frm.append("img", originBlob);
@@ -889,11 +886,8 @@ function labelTag(){
         alert("학습에 실패하였습니다. 서버를 확인해주세요.");
     });
 
-<<<<<<< HEAD
     // predicttime = nowtime();
-=======
     predicttime = returnDate
->>>>>>> 14ba70f9e4c46d58f37412e4c8df9313f8738193
     loadingVeiw("predict", true);
     var frm = new FormData();
     frm.append("user_id", user_phone);
