@@ -1,7 +1,7 @@
-// var photovleML = 'https://5495-114-207-199-81.jp.ngrok.io';
+var photovleML = 'https://da52-218-150-182-248.jp.ngrok.io';
 // var photovleML =  'http://192.168.45.218:5000';
 // var photovleML =  'http://172.30.1.52:5000';
-var photovleML =  'http://119.194.99.62:5000';
+// var photovleML =  'http://119.194.99.62:18806';
 // var photovleML =  'http://116.121.38.22:5000';
 
 // 전역 변수 정의
@@ -36,6 +36,8 @@ const fixed_h = 600;
 //모달에서 이미지 선택
 let pickedN = -1;
 
+//현재시간 정보
+let nowtimeis;
 
 // 그림판 그리기
 function setColor(color) {
@@ -65,8 +67,8 @@ var setRadius = function (newRadius) {
 
 var minRad = 1,
     maxRad = 200,
-    defaultRad = 15,
-    interval = 30,
+    defaultRad = 16,
+    interval = 15,
     radSpan = document.getElementById('radval'),
     decRad = document.getElementById('decrad'),
     incRad = document.getElementById('incrad');
@@ -849,7 +851,8 @@ function labelTag(){
     
     console.log("originImage: ", originBlob);
     console.log("labelImage: ", originBlob);
-    nowtimeis = nowtime();
+    // nowtimeis = nowtime();
+
     // 3. FormData
     var frm = new FormData();
     frm.append("img", originBlob);
@@ -876,7 +879,7 @@ function labelTag(){
         alert("학습에 실패하였습니다. 서버를 확인해주세요.");
     });
 
-    predicttime = nowtime();
+    // predicttime = nowtime();
     loadingVeiw("predict", true);
     var frm = new FormData();
     frm.append("user_id", user_phone);
@@ -1054,7 +1057,8 @@ function predictvideo(){
         method: "POST",
         responseType: "blob", 
         data: {
-            "user_id": user_phone
+            "user_id": user_phone,
+            "timestamp": nowtimeis
         }
     })
     .then(function (response) {
