@@ -1,7 +1,7 @@
 // var photovleML = 'https://5495-114-207-199-81.jp.ngrok.io';
 // var photovleML =  'http://192.168.45.218:5000';
 // var photovleML =  'http://172.30.1.52:5000';
-var photovleML =  'http://119.194.99.62:5000';
+var photovleML =  'https://da52-218-150-182-248.jp.ngrok.io/.';
 // var photovleML =  'http://116.121.38.22:5000';
 
 // 전역 변수 정의
@@ -35,6 +35,16 @@ const fixed_h = 600;
 
 //모달에서 이미지 선택
 let pickedN = -1;
+
+const datenow = Date.now();
+const dateyear = new Date(datenow);
+var year = dateyear.getFullYear().toString().slice(-2); //년도 뒤에 두자리
+var month = ("0" + (dateyear.getMonth() + 1)).slice(-2); //월 2자리 (01, 02 ... 12)
+var day = ("0" + dateyear.getDate()).slice(-2); //일 2자리 (01, 02 ... 31)
+var hour = ("0" + dateyear.getHours()).slice(-2); //시 2자리 (00, 01 ... 23)
+var minute = ("0" + dateyear.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 59)
+var second = ("0" + dateyear.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
+var returnDate = "20" + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second; 
 
 
 // 그림판 그리기
@@ -673,18 +683,10 @@ function mouseCursorMove(e){
     cursor.style.transform = `translate(${x}px, ${y}px)`;
 }
 
-function nowtime(){
-    const datenow = Date.now();
-    const dateyear = new Date(datenow);
-    var year = dateyear.getFullYear().toString().slice(-2); //년도 뒤에 두자리
-    var month = ("0" + (dateyear.getMonth() + 1)).slice(-2); //월 2자리 (01, 02 ... 12)
-    var day = ("0" + dateyear.getDate()).slice(-2); //일 2자리 (01, 02 ... 31)
-    var hour = ("0" + dateyear.getHours()).slice(-2); //시 2자리 (00, 01 ... 23)
-    var minute = ("0" + dateyear.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 59)
-    var second = ("0" + dateyear.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
-    var returnDate = "20" + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second; 
-    return returnDate;
-}
+
+    
+    
+
 
 // 비디오 전송
 function sendVideo(){
@@ -700,7 +702,7 @@ function sendVideo(){
     }   
 
     console.log("2. sendVideo", user_id, user_phone);
-    nowtimeis = nowtime();
+    nowtimeis = returnDate
     var frm = new FormData();
     frm.append("video", file);
     frm.append("user_id", user_phone);
@@ -849,7 +851,7 @@ function labelTag(){
     
     console.log("originImage: ", originBlob);
     console.log("labelImage: ", originBlob);
-    nowtimeis = nowtime();
+    nowtimeis = returnDate
     // 3. FormData
     var frm = new FormData();
     frm.append("img", originBlob);
@@ -876,7 +878,7 @@ function labelTag(){
         alert("학습에 실패하였습니다. 서버를 확인해주세요.");
     });
 
-    predicttime = nowtime();
+    predicttime = returnDate
     loadingVeiw("predict", true);
     var frm = new FormData();
     frm.append("user_id", user_phone);

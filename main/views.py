@@ -24,6 +24,9 @@ import os
 def index(request):
     return render(request, 'index.html')
 
+def introduce(request):
+    return render(request, 'introduce.html')
+
 # 메인페이지
 def home(request):
     return render(request, 'home.html')
