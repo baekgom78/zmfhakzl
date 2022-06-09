@@ -19,6 +19,9 @@ let isDivideVideo = false; // 영상 분할 여부
 
 var selectedFrameItem;  // 현재 이미지 선택된 객체
 var previousCanvasId = 0;
+var isclickTrainImage = false;
+var pagenumber = 1;
+var preindex = -1; 
 
 // canvas 도구
 var dragging = false;
@@ -31,6 +34,19 @@ let isTrainOK = false;
 
 //승훈 추가
 let bHanding = false; // 핸딩 토글 기준
+
+//데모용
+let recommend_value;
+let infor_width = 32;
+let infor_height = 10;
+let infor_number = 1;
+let infor_title = "파일 업로드";
+let infor_content = "파일 업로드 버튼을 눌러 작업할 영상을 선택하세요."
+let notice_content = "현재는 업로드가 제한되어 클릭 시, 데모 영상으로 자동 업로드됩니다!"
+
+//3번 째 안내 있나요
+let startThree = false;
+
 
 let editbarRect = document.querySelector('.edit-bar').getBoundingClientRect();
 const fixed_w = editbarRect.width;
@@ -82,7 +98,7 @@ var setRadius = function (newRadius) {
 var minRad = 1,
     maxRad = 200,
     defaultRad = 16,
-    interval = 15,
+    interval = 5,
     radSpan = document.getElementById('radval'),
     decRad = document.getElementById('decrad'),
     incRad = document.getElementById('incrad');
@@ -103,7 +119,7 @@ function clearImage() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -127,7 +143,7 @@ function handImage() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -141,7 +157,7 @@ function eraserImage() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -158,7 +174,7 @@ function saveImage(el) {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -207,16 +223,24 @@ function checkVideoLoading() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
 }
 
 // 사용자 업로드 영상 불러오기
-function loadUploadVideo(evt) {
+async function loadUploadVideo() {
     console.log("1. loadUploadVideo");
-    file = evt.target.files[0];
+
+    const mediaBlob = await fetch('/static/video/testmp4.mp4')
+    .then(response => response.blob());
+
+    file = new File(
+    [mediaBlob],
+    "데모영상.mp4",
+    { type: 'video/mp4' }
+    );
 
     // 1) Information 정보 추가
     setInformation(file);
@@ -365,6 +389,17 @@ function define_tag() {
     savelabel = label;
     const modal = document.querySelector('.modal');
     modal.style.display = "none"
+
+    // 3번째 안내
+    startThree = true;
+    infor_width = 32;
+    infor_height = 10;
+    infor_number = 3;
+    infor_title = "라벨링";
+    infor_content = "도구를 이용하여 모자이크를 제외할 대상을 칠해주세요"
+    notice_content = "손바닥, 색깔 버튼만 활용해주세요."
+    open_black_background();
+    make_markedbox("#toolbara");
 }
 
 // object 이름 지정 위한 모달 OFF
@@ -379,7 +414,7 @@ function baseImageViewer() {
 }
 //모달에 추천 이미지 6장 불러오기
 async function loadingRecommendImage(){
-    let idx = 1;
+    let idx = 0;
     const modal_w = 360;
     const modal_h = 300;
 
@@ -390,15 +425,12 @@ async function loadingRecommendImage(){
         rowdiv.setAttribute("class", "rowdiv");
 
         for(let j =0; j<3; j++){
-            let tempimage = new Image();
-            tempimage.src = '/static/image/testimg.png';
-
             const imageItem = document.createElement("li");
-            imageItem.setAttribute("id", "rec_frame-" + (idx + 1));
             imageItem.setAttribute("class", "rec-item");
 
             // canvas 태그
             const imageCanvas = document.createElement("canvas");
+            imageCanvas.setAttribute("id", "rec_frame-" + (idx));
             imageCanvas.setAttribute("class", "not_picked");
             imageCanvas.width = modal_w;
             imageCanvas.height = modal_h;
@@ -406,9 +438,7 @@ async function loadingRecommendImage(){
             imageCanvas.addEventListener('click', pickedImage);
 
             const imageCtx = imageCanvas.getContext("2d");
-            tempimage.onload = async function() {
-                imageCtx.drawImage(tempimage, 0, 0, modal_w, modal_h);
-             };
+            // imageCtx.drawImage(frame, 0, 0, modal_w, modal_h);
 
             imageItem.append(imageCanvas);
             rowdiv.append(imageItem);
@@ -423,11 +453,20 @@ async function loadingRecommendImage(){
 
 }
 
+//하나씩 그려주는 함수
+async function drawRecommendImage(index, bitmapimage){
+    const modal_w = 360;
+    const modal_h = 300;
+    const imgCanvas = document.getElementById('rec_frame-' + String(index));
+    const imgCtx = imgCanvas.getContext("2d");
+    imgCtx.drawImage(bitmapimage, 0, 0, modal_w, modal_h);
+}
+
 // 클릭할 때
 function pickedImage(e){
     let pickedcanvas = e.target;
     pickedN = pickedcanvas.value;
-
+    recommend_value = e.target.value
     var picked = document.getElementsByClassName('picked')[0];
     if (picked) {
         picked.className = 'not_picked';
@@ -639,6 +678,7 @@ function createCanvas(bitmapWidth, bitmapHeight) {
 
 // 프레임을 클릭한 경우 -> canvas 호출
 function onClickSpecificFrame(){
+    isclickTrainImage = true;
     var clickFrameID = this.getAttribute('id');
     console.log(clickFrameID)
     
@@ -662,6 +702,44 @@ function onClickSpecificFrame(){
 
     // 모델 예측 요청
     // predictObject();
+}
+
+//Recommend Modal -> Drawing Canvas
+function onClickModalFrame(){
+    isclickTrainImage = true;
+    var clickFrameID = ('rec_frame-' + recommend_value);
+    console.log(clickFrameID)
+    
+    onClickSpecificFrameDegin(clickFrameID);    // font 디자인
+    changeInfromationNowFrame(clickFrameID);    // infromation 업데이트
+
+    const currentCanvasId = clickFrameID.split('-')[1];
+    const frame = frames[currentCanvasId];
+    // canvasImage.width = frame.width;
+    // canvasImage.height = frame.height;
+    // ctxImage.drawImage(frame, 0, 0);
+    canvasImage.width = fixed_w;
+    canvasImage.height = fixed_h;
+    ctxImage.drawImage(frame, 0, 0);
+
+    // previousCanvasId
+    document.getElementById("canvas-drawing-" + previousCanvasId).parentNode.style.display = "none";
+    document.getElementById("canvas-drawing-" + currentCanvasId).parentNode.style.display = "block";
+
+    previousCanvasId = currentCanvasId;
+
+    // 모델 예측 요청
+    // predictObject();
+
+    // 2번째 안내
+    infor_width = 24;
+    infor_height = 10;
+    infor_number = 2;
+    infor_title = "라벨 제목 입력";
+    infor_content = "저장할 때 쓰일 라벨명을 입력해주세요."
+    notice_content = ""
+    open_black_background();
+    make_markedbox(".edit-label-name");
 }
 
 function onClickSpecificFrameDegin(clickFrameID) {
@@ -744,20 +822,25 @@ function sendVideo(){
                     createImageBitmap(blob)
                 ]).then(function(result){
                     frames.push(result[0]);
-                    createImageList(index, result[0]);
+                    // createImageList(index, result[0]);
                     setInformationTotalFrmae(index);
                     createCanvas(result[0].width, result[0].height);
                     index = index + 1;
                     return result[0]
+                }).then(function(result){
+                    drawRecommendImage(index, result);
                 });
-            });
+            })
         }
         isDivideVideo = true;
         loadingVeiw("simimg",false)
+    }).then(_ => {
+        selectedmodalopen();
+        
     })
     .catch((error) => {
         console.log("영상 업로드가 실패되었습니다. 서버를 확인해주세요.");
-    });
+    })
 }
 
 
@@ -826,7 +909,7 @@ function labelTag(){
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if(isclickTrainImage == false){
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return ;
     }
@@ -847,18 +930,13 @@ function labelTag(){
     // 1. orign canvas to file
     var originCanvas = document.getElementById("imgViewer");
     var originUrl = originCanvas.toDataURL("image/jpeg");
-    var originBlob = dataURItoBlob(originUrl, "frame-" + previousCanvasId);
+    var originBlob = dataURItoBlob(originUrl, "frame-" + previousCanvasId); 
 
     // 2. Draw canvas to file
     var labelCanvas = document.getElementById("canvas-drawing-" + previousCanvasId);
     console.log("please previousCanvasId", previousCanvasId);
     var labelUrl = labelCanvas.toDataURL("image/jpeg");
     var labelBlob = dataURItoBlob(labelUrl, "canvas-drawing-" + previousCanvasId);
-    
-    console.log("originImage: ", originBlob);
-    console.log("labelImage: ", originBlob);
-    // nowtimeis = nowtime();
-
     nowtimeis = returnDate
     // 3. FormData
     var frm = new FormData();
@@ -872,38 +950,38 @@ function labelTag(){
         'Content-Type': 'multipart/form-data'
         }
     })
-    .then((response) => {
-        if(response.status == 200){
-            isTrainOK = true;
-            console.log("4. Success Train");
-            console.log(response);
-            loadingVeiw("train", false);
+    // .then((response) => {
+    //     if(response.status == 200){
+    //         isTrainOK = true;
+    //         console.log("4. Success Train");
+    //         console.log(response);
+    //         loadingVeiw("train", false);
             
-        }        
-    })
-    .catch(function (error) {
-        console.log("Train Fail : ", error);
-        alert("학습에 실패하였습니다. 서버를 확인해주세요.");
-    });
+    //     }        
+    // })
+    // .catch(function (error) {
+    //     console.log("Train Fail : ", error);
+    //     alert("학습에 실패하였습니다. 서버를 확인해주세요.");
+    // });
 
-    // predicttime = nowtime();
-    predicttime = returnDate
-    loadingVeiw("predict", true);
-    var frm = new FormData();
-    frm.append("user_id", user_phone);
-    frm.append("timestamp", predicttime);
+    // // predicttime = nowtime();
+    // predicttime = returnDate
+    // loadingVeiw("predict", true);
+    // var frm = new FormData();
+    // frm.append("user_id", user_phone);
+    // frm.append("timestamp", predicttime);
 
-    axios.post(photovleML + '/data/video/testing', frm, {
-        headers: {
-        'Content-Type': 'multipart/form-data'
-        }
-    })
+    // axios.post(photovleML + '/data/video/testing', frm, {
+    //     headers: {
+    //     'Content-Type': 'multipart/form-data'
+    //     }
+    // })
     .then((response) => {
-        console.log("5. predicted 10 image");
+        console.log("5. predicted 8 image");
         console.log(response); 
         frames = [];
         const select = document.querySelector("select");   
-        var preindex = -1;    
+           
         for(i=1;i<9;i++)
         {
             var predictedimg = response.data["video-frame-" + i + ".png"]
@@ -952,7 +1030,6 @@ function labelTag(){
                     setInformationTotalFrmae(preindex);
                     createCanvas(result[0].width, result[0].height);
                     preindex = preindex + 1;
-                    console.log(frames)
                     return result[0]
                 });
             });
@@ -960,7 +1037,168 @@ function labelTag(){
         loadingVeiw("predict", false);
         
     })
+    .then(_ => {
+        //5번 째 예측
+        infor_width = 32;
+        infor_height = 10;
+        infor_number = 5;
+        infor_title = "동영상 변환";
+        infor_content = "해당 버튼을 눌러 모자이크 처리된 영상을 받습니다."
+        notice_content = "";
+        open_black_background();
+        make_markedbox(".downloadvideo");
+    })
 
+
+}
+
+function pageNumberview(){
+    document.getElementById("page-number").innerHTML=pagenumber;
+}
+
+function paginationRight(){
+    try {
+        if(user_phone.length == 0){
+            alert("로그인 세션이 만료되었습니다.");
+            return;
+        }
+    } catch (error) {
+        console.error(error);
+        alert("로그인 세션이 만료되었습니다.");
+        return;     
+    }
+
+    if(isDivideVideo == false){
+        alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
+        return;
+    }
+    if(isclickTrainImage == false){
+        alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
+        return ;
+    }
+    if (document.querySelector("#label_name").textContent == "") {
+        alert("레이블링의 object를 정의해주세요.");
+        return;
+    }
+    
+    console.log("6. pagination");
+    var predictedImageEight = [];
+    // 1. orign canvas to file
+    nowtimeis = returnDate
+    // 3. FormData
+    
+    var frm = new FormData();
+    // 2. Draw canvas to file
+    for(i=(pagenumber-1)*8+1;i<pagenumber*8+1;i++)
+    {
+        var labelCanvas = document.getElementById("canvas-drawing-" + i);
+        console.log(i);
+        var labelUrl = labelCanvas.toDataURL("image/jpeg");
+        var labelBlob = dataURItoBlob(labelUrl, "canvas-drawing-" + i);
+        var imgsname = "save_imgs"+(i);
+        console.log(imgsname);
+        frm.append(imgsname, labelBlob);
+    }
+    
+    frm.append("user_id", user_phone);
+    frm.append("timestamp", nowtimeis);
+    frm.append("current_page", pagenumber);
+    
+    frm.append("flag", true);
+    console.log(pagenumber)
+    var completeframe = document.getElementById('frame-' + (pagenumber-1));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+1));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+2));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+3));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+4));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+5));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+6));    
+    completeframe.remove();
+    
+    pagenumber = pagenumber + 1;
+    axios.post(photovleML + '/data/video/paging', frm, {
+        headers: {
+        'Content-Type': 'multipart/form-data'
+        }
+    })
+    
+    .then((response) => {
+        
+        console.log("8. next predicted 8 image recevie");
+        console.log(response); 
+        frames = [];
+        const select = document.querySelector("select");    
+        for(i=(pagenumber-1)*8+1;i<pagenumber*8+1;i++)
+        {
+            console.log(i)
+            var predictedimg = response.data.origin_data["video-frame-" + i + ".png"]
+            if(response.data.length == 0){
+                alert("예측된 이미지를 못 가져왔어요. 다시 시도해주세요.");
+                return;
+            }
+            const predicteddata = "data:image/png;base64," + predictedimg; // base64 데이터 url 정보
+            
+            
+            fetch(predicteddata)
+            .then(response => response.blob())
+            .then(blob =>{
+                Promise.all([
+                    createImageBitmap(blob)
+                ]).then(function(result){
+                    frames.push(result[0]);
+                    console.log("predicted image list create")
+                    const imageItem = document.createElement("li");
+                    imageItem.setAttribute("id", "frame-" + (preindex + 1));
+                    imageItem.setAttribute("class", "image-item-predicted");
+                    
+                    imageItem.onclick = onClickSpecificFrame;
+
+                    // canvas 태그
+                    const imageCanvas = document.createElement("canvas");
+                    imageCanvas.width = 120;
+                    imageCanvas.height = 100;
+                    const imageCtx = imageCanvas.getContext("2d");
+                    imageCtx.drawImage(result[0], 0, 0, 120, 100);
+                
+
+                    // p 태그
+                    const imageId = document.createElement("p");
+                    imageId.textContent = "frame-" + (preindex + 1);
+
+                    imageItem.append(imageCanvas);
+                    imageItem.append(imageId);
+
+                    // ul 태그 추가
+                    const imageListUl = document.getElementById("image-list-predicted");
+                    imageListUl.append(imageItem);
+
+
+                    
+                    setInformationTotalFrmae(preindex);
+                    createCanvas(result[0].width, result[0].height);
+                    preindex = preindex + 1;
+                    return result[0]
+                });
+            });
+        }
+        loadingVeiw("predict", false);
+
+
+
+
+    })
+    .catch(function (error) {
+        console.log("Train Fail : ", error);
+        alert("학습에 실패하였습니다. 서버를 확인해주세요.");
+    });
 
 }
 
@@ -981,7 +1219,7 @@ function predictObject(){
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if(isclickTrainImage == false){
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return ;
     }
@@ -1091,8 +1329,9 @@ baseImageViewer();
 loadingRecommendImage();
 
 // 파일 업로드 버튼 이벤트
+
 const uploadVideoButton = document.querySelector("#upload_video");
-uploadVideoButton.addEventListener("change", (evt) => loadUploadVideo(evt));
+uploadVideoButton.addEventListener("click", loadUploadVideo);
 
 // 이미지 분할 아이콘 버튼 이벤트
 //const imgSplittingButton = document.getElementById("divide_video");
@@ -1153,3 +1392,117 @@ async function redraw(zoom, predefinedCanvas, combinedCanvas, context, cameraOff
     context.drawImage(combinedCanvas, 0, 0);
 
 }
+
+//selected modal open
+
+function selectedmodalopen(){
+    let selectedbutton = document.getElementById('selectedbutton');
+    selectedbutton.click();
+}
+
+function open_black_background(){
+    var backdiv = document.createElement('div');
+    backdiv.className = "bb_modal";
+    document.getElementsByTagName('body')[0].appendChild(backdiv)
+    // document.get('colors').appendChild(swatchbox);
+}
+
+function open_arrow(top, left){
+    var firstarrow = document.createElement('div');
+    firstarrow.className = "arrow arrow-first";
+    document.getElementsByTagName('body')[0].appendChild(firstarrow)
+    var secondarrow = document.createElement('div');
+    secondarrow.className = "arrow arrow-second";
+    document.getElementsByTagName('body')[0].appendChild(secondarrow)
+
+    var arrow = document.getElementsByClassName('arrow');
+    for(let i=0; i<2; i++){
+        arrow[i].style.top = String(top - 20) + "px";
+        arrow[i].style.left = String(left - 20) + "px";
+    }
+    
+}
+
+function revise_inforBox(infor_top, infor_left, infor_width, infor_height, infor_title, infor_number, infor_content, notice_content ){
+    let inforbox = document.getElementsByClassName('inforBox')[0];
+    inforbox.style.top = String(infor_top) + "px";
+    inforbox.style.left = String(infor_left) + "px";
+    inforbox.style.width = String(infor_width) + "rem";
+    inforbox.style.height = String(infor_height) + "rem";
+    let infornumber = document.getElementsByClassName('inforNum')[0];
+    infornumber.innerHTML = String(infor_number);
+    let infortitle = document.getElementsByClassName('inforTitle')[0];
+    infortitle.innerHTML = String(infor_title);
+    let inforcontent = document.getElementsByClassName('inforContent')[0];
+    inforcontent.innerHTML = String(infor_content);
+    let noticecontent = document.getElementsByClassName('noticeContent')[0];
+    noticecontent.innerHTML = String(notice_content);
+    
+}
+
+
+function make_markedbox(className){
+    let selectdiv = document.querySelector(className);
+    let imgRect =selectdiv.getBoundingClientRect();
+
+    console.log(imgRect)
+    var markedbox = document.createElement('div');
+    markedbox.className = "markedbox";
+    markedbox.style.zIndex = "20";
+    markedbox.style.top = String(imgRect.top) + "px";
+    markedbox.style.left = String(imgRect.left) + "px";
+    markedbox.style.width = String(imgRect.width) + "px";
+    markedbox.style.height = String(imgRect.height) + "px";
+    markedbox.style.cursor = "pointer";
+    markedbox.onclick = allclose;
+
+    document.documentElement.style.setProperty('--ani-top_start', String(imgRect.top - 50) + "px" );
+    document.getElementsByTagName('body')[0].appendChild(markedbox);
+
+    const arrow_top = imgRect.top;
+    const arrow_left = imgRect.left + (imgRect.width/2);
+    open_arrow(arrow_top, arrow_left);
+
+    const infor_top = imgRect.top;
+    const infor_left = imgRect.right + 20;
+
+    revise_inforBox(infor_top, infor_left, infor_width, infor_height, infor_title, infor_number, infor_content, notice_content)
+    inforboxopen();
+
+}
+
+function allclose(){
+    console.log("hi")
+    const backdiv = document.getElementsByClassName('bb_modal')[0];
+    const arrow = document.getElementsByClassName('arrow');
+    const markedbox = document.getElementsByClassName('markedbox')[0];
+    backdiv.remove();
+    for(let i=0; i<2; i++){
+        arrow[0].remove();
+    }
+    markedbox.remove();
+
+
+    const inforbox = document.getElementsByClassName('inforBox')[0];
+    inforbox.style.display = 'none';
+
+    if(startThree){
+        //4번 째 안내
+        startThree = false
+        infor_width = 32;
+        infor_height = 10;
+        infor_number = 4;
+        infor_title = "학습 및 예측";
+        infor_content = "라벨링이 끝나면 해당 버튼을 눌러 학습을 진행해주세요."
+        open_black_background();
+        make_markedbox("#labelTagbutton");
+    }
+}
+
+function inforboxopen(){
+    const inforbox = document.getElementsByClassName('inforBox')[0];
+    inforbox.style.display = 'block';
+}
+
+open_black_background();
+make_markedbox(".input-file");
