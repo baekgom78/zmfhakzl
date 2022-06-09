@@ -86,33 +86,35 @@
             <div class="step3" id="step3" style="display: none;">
                 <video id="video" style="display: none;"></video>
                 <div class="infomation-area" style="cursor:default;">
-                    <h3>모자이크가 제대로 됬는지 확인해주세요</h3>
+                    <div class = "titlediv">
+                        <h3>영상 정보</h3>
+                    </div>
                     <ul>
                         <li>
-                            <span>File Name : </span>
+                            <span>영상 제목</span>
                             <p id="file_name"></p>
                         </li>
                         <li>
-                            <span>Object : </span>
+                            <span>라벨 제목</span>
                             <div class="edit-label-name">
                                 <p id="label_name"></p>
                                 <img src="/static/image/icon_edit.svg" class="btn-open-popup">
                             </div>
                         </li>
                         <li>
-                            <span>Total Frame : </span>
-                            <p id="file_frame">0</p>
+                            <span>총 프레임</span>
+                            <p id="file_frame"></p>
                         </li>
                         <li>
-                            <span>Now Frame : </span>
+                            <span>현재 프레임</span>
                             <p id="label_now"></p>
                         </li>
                         <li>
-                            <span>Size : </span>
+                            <span>파일 크기</span>
                             <p id="file_size"></p>
                         </li>
                         <li>
-                            <span>Type : </span>
+                            <span>파일 타입</span>
                             <p id="file_type"></p>
                         </li>
                     </ul>
@@ -122,11 +124,16 @@
                 </div>
                 <!-- 여러 설정 바 -->
                 <div class="control-bar-option-area">
-                    <img src="/static/image/icon_video2.svg" onclick="predictvideo()">
+                    <img class = "downloadvideo" src="/static/image/icon_video2.svg" onclick="predictvideo()">
                 </div>
                 <!-- 이미지 프레임 목록 -->
                 <div id="image-area-predicted">
                     <ul id="image-list-predicted"></ul>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item"><a class="page-link" href="#">이전</a></li>
+                        <li class="page-item"><a id="page-number" class="page-link" href="#"></a></li>
+                        <li class="page-item" onclick="paginationRight()"><a class="page-link" >다음</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -222,7 +229,7 @@
                 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
                 </div></div>
 
-            <p id="loading-text">잠시만 기다려주세요.(20초 내외)</p>
+            <p id="loading-text">잠시만 기다려주세요. (20초 내외)</p>
         <div>
                
     </div>

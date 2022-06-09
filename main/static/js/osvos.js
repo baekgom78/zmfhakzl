@@ -1,7 +1,8 @@
-// var photovleML = 'https://5495-114-207-199-81.jp.ngrok.io';
+var photovleML = 'https://da52-218-150-182-248.jp.ngrok.io';
 // var photovleML =  'http://192.168.45.218:5000';
 // var photovleML =  'http://172.30.1.52:5000';
-var photovleML =  'https://da52-218-150-182-248.jp.ngrok.io';
+// var photovleML =  'http://119.194.99.62:18806';
+// var photovleML =  'https://da52-218-150-182-248.jp.ngrok.io/.';
 // var photovleML =  'http://116.121.38.22:5000';
 
 // 전역 변수 정의
@@ -18,6 +19,9 @@ let isDivideVideo = false; // 영상 분할 여부
 
 var selectedFrameItem;  // 현재 이미지 선택된 객체
 var previousCanvasId = 0;
+var isclickTrainImage = false;
+var pagenumber = 1;
+var preindex = -1; 
 
 // canvas 도구
 var dragging = false;
@@ -51,6 +55,19 @@ const fixed_h = editbarRect.height;
 //모달에서 이미지 선택
 let pickedN = -1;
 
+//현재시간 정보
+let nowtimeis;
+
+const datenow = Date.now();
+const dateyear = new Date(datenow);
+var year = dateyear.getFullYear().toString().slice(-2); //년도 뒤에 두자리
+var month = ("0" + (dateyear.getMonth() + 1)).slice(-2); //월 2자리 (01, 02 ... 12)
+var day = ("0" + dateyear.getDate()).slice(-2); //일 2자리 (01, 02 ... 31)
+var hour = ("0" + dateyear.getHours()).slice(-2); //시 2자리 (00, 01 ... 23)
+var minute = ("0" + dateyear.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 59)
+var second = ("0" + dateyear.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
+var returnDate = "20" + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second; 
+
 
 // 그림판 그리기
 function setColor(color) {
@@ -80,8 +97,8 @@ var setRadius = function (newRadius) {
 
 var minRad = 1,
     maxRad = 200,
-    defaultRad = 15,
-    interval = 30,
+    defaultRad = 16,
+    interval = 5,
     radSpan = document.getElementById('radval'),
     decRad = document.getElementById('decrad'),
     incRad = document.getElementById('incrad');
@@ -102,7 +119,7 @@ function clearImage() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -126,7 +143,7 @@ function handImage() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -140,7 +157,7 @@ function eraserImage() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -157,7 +174,7 @@ function saveImage(el) {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -206,7 +223,7 @@ function checkVideoLoading() {
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if (previousCanvasId == 0) {
+    if (isclickTrainImage == false) {
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return;
     }
@@ -661,6 +678,7 @@ function createCanvas(bitmapWidth, bitmapHeight) {
 
 // 프레임을 클릭한 경우 -> canvas 호출
 function onClickSpecificFrame(){
+    isclickTrainImage = true;
     var clickFrameID = this.getAttribute('id');
     console.log(clickFrameID)
     
@@ -688,6 +706,7 @@ function onClickSpecificFrame(){
 
 //Recommend Modal -> Drawing Canvas
 function onClickModalFrame(){
+    isclickTrainImage = true;
     var clickFrameID = ('rec_frame-' + recommend_value);
     console.log(clickFrameID)
     
@@ -748,18 +767,10 @@ function mouseCursorMove(e){
     cursor.style.transform = `translate(${x}px, ${y}px)`;
 }
 
-function nowtime(){
-    const datenow = Date.now();
-    const dateyear = new Date(datenow);
-    var year = dateyear.getFullYear().toString().slice(-2); //년도 뒤에 두자리
-    var month = ("0" + (dateyear.getMonth() + 1)).slice(-2); //월 2자리 (01, 02 ... 12)
-    var day = ("0" + dateyear.getDate()).slice(-2); //일 2자리 (01, 02 ... 31)
-    var hour = ("0" + dateyear.getHours()).slice(-2); //시 2자리 (00, 01 ... 23)
-    var minute = ("0" + dateyear.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 59)
-    var second = ("0" + dateyear.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
-    var returnDate = "20" + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second; 
-    return returnDate;
-}
+
+    
+    
+
 
 // 비디오 전송
 function sendVideo(){
@@ -775,7 +786,7 @@ function sendVideo(){
     }   
 
     console.log("2. sendVideo", user_id, user_phone);
-    nowtimeis = nowtime();
+    nowtimeis = returnDate
     var frm = new FormData();
     frm.append("video", file);
     frm.append("user_id", user_phone);
@@ -898,7 +909,7 @@ function labelTag(){
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if(isclickTrainImage == false){
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return ;
     }
@@ -919,17 +930,14 @@ function labelTag(){
     // 1. orign canvas to file
     var originCanvas = document.getElementById("imgViewer");
     var originUrl = originCanvas.toDataURL("image/jpeg");
-    var originBlob = dataURItoBlob(originUrl, "frame-" + previousCanvasId);
+    var originBlob = dataURItoBlob(originUrl, "frame-" + previousCanvasId); 
 
     // 2. Draw canvas to file
     var labelCanvas = document.getElementById("canvas-drawing-" + previousCanvasId);
     console.log("please previousCanvasId", previousCanvasId);
     var labelUrl = labelCanvas.toDataURL("image/jpeg");
     var labelBlob = dataURItoBlob(labelUrl, "canvas-drawing-" + previousCanvasId);
-    
-    console.log("originImage: ", originBlob);
-    console.log("labelImage: ", originBlob);
-    nowtimeis = nowtime();
+    nowtimeis = returnDate
     // 3. FormData
     var frm = new FormData();
     frm.append("img", originBlob);
@@ -942,37 +950,38 @@ function labelTag(){
         'Content-Type': 'multipart/form-data'
         }
     })
-    .then((response) => {
-        if(response.status == 200){
-            isTrainOK = true;
-            console.log("4. Success Train");
-            console.log(response);
-            loadingVeiw("train", false);
+    // .then((response) => {
+    //     if(response.status == 200){
+    //         isTrainOK = true;
+    //         console.log("4. Success Train");
+    //         console.log(response);
+    //         loadingVeiw("train", false);
             
-        }        
-    })
-    .catch(function (error) {
-        console.log("Train Fail : ", error);
-        alert("학습에 실패하였습니다. 서버를 확인해주세요.");
-    });
+    //     }        
+    // })
+    // .catch(function (error) {
+    //     console.log("Train Fail : ", error);
+    //     alert("학습에 실패하였습니다. 서버를 확인해주세요.");
+    // });
 
-    predicttime = nowtime();
-    loadingVeiw("predict", true);
-    var frm = new FormData();
-    frm.append("user_id", user_phone);
-    frm.append("timestamp", predicttime);
+    // // predicttime = nowtime();
+    // predicttime = returnDate
+    // loadingVeiw("predict", true);
+    // var frm = new FormData();
+    // frm.append("user_id", user_phone);
+    // frm.append("timestamp", predicttime);
 
-    axios.post(photovleML + '/data/video/testing', frm, {
-        headers: {
-        'Content-Type': 'multipart/form-data'
-        }
-    })
+    // axios.post(photovleML + '/data/video/testing', frm, {
+    //     headers: {
+    //     'Content-Type': 'multipart/form-data'
+    //     }
+    // })
     .then((response) => {
-        console.log("5. predicted 10 image");
+        console.log("5. predicted 8 image");
         console.log(response); 
         frames = [];
         const select = document.querySelector("select");   
-        var preindex = -1;    
+           
         for(i=1;i<9;i++)
         {
             var predictedimg = response.data["video-frame-" + i + ".png"]
@@ -1021,7 +1030,6 @@ function labelTag(){
                     setInformationTotalFrmae(preindex);
                     createCanvas(result[0].width, result[0].height);
                     preindex = preindex + 1;
-                    console.log(frames)
                     return result[0]
                 });
             });
@@ -1029,7 +1037,168 @@ function labelTag(){
         loadingVeiw("predict", false);
         
     })
+    .then(_ => {
+        //5번 째 예측
+        infor_width = 32;
+        infor_height = 10;
+        infor_number = 5;
+        infor_title = "동영상 변환";
+        infor_content = "해당 버튼을 눌러 모자이크 처리된 영상을 받습니다."
+        notice_content = "";
+        open_black_background();
+        make_markedbox(".downloadvideo");
+    })
 
+
+}
+
+function pageNumberview(){
+    document.getElementById("page-number").innerHTML=pagenumber;
+}
+
+function paginationRight(){
+    try {
+        if(user_phone.length == 0){
+            alert("로그인 세션이 만료되었습니다.");
+            return;
+        }
+    } catch (error) {
+        console.error(error);
+        alert("로그인 세션이 만료되었습니다.");
+        return;     
+    }
+
+    if(isDivideVideo == false){
+        alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
+        return;
+    }
+    if(isclickTrainImage == false){
+        alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
+        return ;
+    }
+    if (document.querySelector("#label_name").textContent == "") {
+        alert("레이블링의 object를 정의해주세요.");
+        return;
+    }
+    
+    console.log("6. pagination");
+    var predictedImageEight = [];
+    // 1. orign canvas to file
+    nowtimeis = returnDate
+    // 3. FormData
+    
+    var frm = new FormData();
+    // 2. Draw canvas to file
+    for(i=(pagenumber-1)*8+1;i<pagenumber*8+1;i++)
+    {
+        var labelCanvas = document.getElementById("canvas-drawing-" + i);
+        console.log(i);
+        var labelUrl = labelCanvas.toDataURL("image/jpeg");
+        var labelBlob = dataURItoBlob(labelUrl, "canvas-drawing-" + i);
+        var imgsname = "save_imgs"+(i);
+        console.log(imgsname);
+        frm.append(imgsname, labelBlob);
+    }
+    
+    frm.append("user_id", user_phone);
+    frm.append("timestamp", nowtimeis);
+    frm.append("current_page", pagenumber);
+    
+    frm.append("flag", true);
+    console.log(pagenumber)
+    var completeframe = document.getElementById('frame-' + (pagenumber-1));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+1));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+2));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+3));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+4));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+5));    
+    completeframe.remove();
+    var completeframe = document.getElementById('frame-' + (pagenumber+6));    
+    completeframe.remove();
+    
+    pagenumber = pagenumber + 1;
+    axios.post(photovleML + '/data/video/paging', frm, {
+        headers: {
+        'Content-Type': 'multipart/form-data'
+        }
+    })
+    
+    .then((response) => {
+        
+        console.log("8. next predicted 8 image recevie");
+        console.log(response); 
+        frames = [];
+        const select = document.querySelector("select");    
+        for(i=(pagenumber-1)*8+1;i<pagenumber*8+1;i++)
+        {
+            console.log(i)
+            var predictedimg = response.data.origin_data["video-frame-" + i + ".png"]
+            if(response.data.length == 0){
+                alert("예측된 이미지를 못 가져왔어요. 다시 시도해주세요.");
+                return;
+            }
+            const predicteddata = "data:image/png;base64," + predictedimg; // base64 데이터 url 정보
+            
+            
+            fetch(predicteddata)
+            .then(response => response.blob())
+            .then(blob =>{
+                Promise.all([
+                    createImageBitmap(blob)
+                ]).then(function(result){
+                    frames.push(result[0]);
+                    console.log("predicted image list create")
+                    const imageItem = document.createElement("li");
+                    imageItem.setAttribute("id", "frame-" + (preindex + 1));
+                    imageItem.setAttribute("class", "image-item-predicted");
+                    
+                    imageItem.onclick = onClickSpecificFrame;
+
+                    // canvas 태그
+                    const imageCanvas = document.createElement("canvas");
+                    imageCanvas.width = 120;
+                    imageCanvas.height = 100;
+                    const imageCtx = imageCanvas.getContext("2d");
+                    imageCtx.drawImage(result[0], 0, 0, 120, 100);
+                
+
+                    // p 태그
+                    const imageId = document.createElement("p");
+                    imageId.textContent = "frame-" + (preindex + 1);
+
+                    imageItem.append(imageCanvas);
+                    imageItem.append(imageId);
+
+                    // ul 태그 추가
+                    const imageListUl = document.getElementById("image-list-predicted");
+                    imageListUl.append(imageItem);
+
+
+                    
+                    setInformationTotalFrmae(preindex);
+                    createCanvas(result[0].width, result[0].height);
+                    preindex = preindex + 1;
+                    return result[0]
+                });
+            });
+        }
+        loadingVeiw("predict", false);
+
+
+
+
+    })
+    .catch(function (error) {
+        console.log("Train Fail : ", error);
+        alert("학습에 실패하였습니다. 서버를 확인해주세요.");
+    });
 
 }
 
@@ -1050,7 +1219,7 @@ function predictObject(){
         alert("비디오 업로드 및 분할을 먼저 진행해주세요.");
         return;
     }
-    if(previousCanvasId == 0){
+    if(isclickTrainImage == false){
         alert("학습할 이미지 Frame을 선택 후 라벨링을 진행해주세요.");
         return ;
     }
@@ -1134,7 +1303,8 @@ function predictvideo(){
         method: "POST",
         responseType: "blob", 
         data: {
-            "user_id": user_phone
+            "user_id": user_phone,
+            "timestamp": nowtimeis
         }
     })
     .then(function (response) {
@@ -1286,6 +1456,7 @@ function make_markedbox(className){
     markedbox.style.cursor = "pointer";
     markedbox.onclick = allclose;
 
+    document.documentElement.style.setProperty('--ani-top_start', String(imgRect.top - 50) + "px" );
     document.getElementsByTagName('body')[0].appendChild(markedbox);
 
     const arrow_top = imgRect.top;
