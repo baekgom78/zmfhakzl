@@ -217,7 +217,7 @@
 /*** Hero Header ***/
 .hero-header {
     margin-bottom: 6rem;
-    padding: 12rem 0 9rem 0;
+    padding: 12rem 0 6.5rem 0;
     background: url(../img/shape-bottom.png) center bottom no-repeat;
 }
 
@@ -468,4 +468,17 @@
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts2201-3@1.0/ROKAFSansMedium.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+}
+
+.centerbox{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+
+}
+#demo_button{
+    width : 20rem;
+    font-size: 2rem;
+    font-weight: 700;
 }
