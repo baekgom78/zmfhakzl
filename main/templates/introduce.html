@@ -12,6 +12,7 @@
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
 
+    <script src="https://kit.fontawesome.com/158594be23.js" crossorigin="anonymous"></script>
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,8 +72,10 @@
                 <div class="container">
                     <div class="row g-5 align-items-center">
                         <div class="col-lg-6 text-center text-lg-start">
-                            <h1 class="text-white mb-4 animated zoomIn">크로마키 입니다</h1>
-                            <p class="text-white pb-3 animated zoomIn">Tempor rebum no at dolore lorem clita rebum rebum ipsum rebum stet dolor sed justo kasd. Ut dolor sed magna dolor sea diam. Sit diam sit justo amet ipsum vero ipsum clita lorem</p>
+                            <h1 class="text-white mb-4 animated zoomIn service-name">크 로 마 키</h1>
+                            <p class="text-white pb-3 animated zoomIn service-desc">
+                                누구나 쉽게 이용 가능한 <br>인공지능 기반 모자이크 자동화 서비스입니다. <br> 
+                            </p>
 
                         </div>
                         <div class="col-lg-6 text-center text-lg-start">
@@ -93,26 +96,35 @@
                         <img class="img-fluid" style="border: 1px solid rgba(0,0,0,0.2);" src="{% static 'image/introduce/introduce_project.png'%}">
                     </div>
                     <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="d-inline-block border rounded-pill text-primary px-4 mb-3">프로젝트 소개</div>
-                        <h2 class="mb-4">개인정보 보호를 위한 영상 자동 모자이크 서비스</h2>
-                        <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod</p>
+                       
+                        <h2 class="mb-4 info-title">서비스 소개</h2>
+                        
                         <div class="row g-3 mb-4">
                             <div class="col-12 d-flex">
                                 <div class="flex-shrink-0 btn-lg-square rounded-circle bg-primary">
-                                    <i class="fa fa-user-tie text-white"></i>
+                                    <i s class="fa fa-film text-white"></i>
                                 </div>
                                 <div class="ms-4">
-                                    <h6>Business Planning</h6>
-                                    <span>Tempor erat elitr rebum at clita. Diam dolor ipsum amet eos erat ipsum lorem et sit sed stet lorem sit clita duo</span>
+                                    <h6>업로드 된 영상을 프레임 단위로 분할</h6>
+                                    <span>영상을 업로드하면 프레임단위로 분할하여 서버로 전송합니다. </span>
                                 </div>
                             </div>
                             <div class="col-12 d-flex">
                                 <div class="flex-shrink-0 btn-lg-square rounded-circle bg-primary">
-                                    <i class="fa fa-chart-line text-white"></i>
+                                    <i s class="fa fa-person-burst text-white"></i>
                                 </div>
                                 <div class="ms-4">
-                                    <h6>Financial Analaysis</h6>
-                                    <span>Tempor erat elitr rebum at clita. Diam dolor ipsum amet eos erat ipsum lorem et sit sed stet lorem sit clita duo</span>
+                                    <h6>AI 학습을 위해 프레임 1장에서 특정 개체 지정</h6>
+                                    <span>그림판을 이용해 선택한 프레임에서 원하는 객체를 선택합니다. </span>
+                                </div>
+                            </div>
+                            <div class="col-12 d-flex">
+                                <div class="flex-shrink-0 btn-lg-square rounded-circle bg-primary">
+                                    <i class="fa-solid fa-photo-film text-white"></i>
+                                </div>
+                                <div class="ms-4">
+                                    <h6>AI 모델 학습 및 나머지 프레임에서 개체 예측</h6>
+                                    <span>모델을 학습하고 예측하여 모자이크 처리된 영상을 제공합니다.</span>
                                 </div>
                             </div>
                         </div>
@@ -122,155 +134,36 @@
         </div>
         <!-- About End -->
 
-
+        <hr width="100%">
         <!-- Service Start -->
         <div class="container-xxl py-6">
             <div class="container">
+                <h2 class="mx-auto text-center info-title">서비스 플로우</h2> 
                 <div class="mx-auto text-center wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <div class="d-inline-block border rounded-pill text-primary px-4 mb-3">서비스 소개</div>
-                    <h2 class="mb-5">We Provide Solutions On Your Business</h2>
+                    <!-- <div class="d-inline-block border rounded-pill text-primary px-4 mb-3 desc">서비스 이용 예시</div>-->
+
+                    <!-- <h2 class="mb-5">크로마키 사용 방법입니다.</h2> -->
                 </div>
-                <div class="row g-4">
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="service-item rounded h-100">
-                            <div class="d-flex justify-content-between">
-                                <div class="service-icon">
-                                    <i class="fa fa-user-tie fa-2x"></i>
-                                </div>
-                                <a class="service-btn" href="">
-                                    <i class="fa fa-link fa-2x"></i>
-                                </a>
-                            </div>
-                            <div class="p-5">
-                                <h5 class="mb-3">Business Research</h5>
-                                <span>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="service-item rounded h-100">
-                            <div class="d-flex justify-content-between">
-                                <div class="service-icon">
-                                    <i class="fa fa-chart-pie fa-2x"></i>
-                                </div>
-                                <a class="service-btn" href="">
-                                    <i class="fa fa-link fa-2x"></i>
-                                </a>
-                            </div>
-                            <div class="p-5">
-                                <h5 class="mb-3">Stretagic Planning</h5>
-                                <span>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="service-item rounded h-100">
-                            <div class="d-flex justify-content-between">
-                                <div class="service-icon">
-                                    <i class="fa fa-chart-line fa-2x"></i>
-                                </div>
-                                <a class="service-btn" href="">
-                                    <i class="fa fa-link fa-2x"></i>
-                                </a>
-                            </div>
-                            <div class="p-5">
-                                <h5 class="mb-3">Market Analysis</h5>
-                                <span>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="serviceflow_img">
+                <img src="{% static 'image/serviceflow.png' %}" style="width:100%">
                 </div>
             </div>
         </div>
         <!-- Service End -->
-
-
-        <!-- Features Start -->
+        <hr width="100%">
+     
         <div class="container-xxl py-6">
             <div class="container">
                 <div class="row g-5">
                     <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="d-inline-block border rounded-pill text-primary px-4 mb-3">특징 / 장점 / 뭐 등등</div>
-                        <h2 class="mb-4">Why People Choose Us? We Are Trusted & Award Wining Agency</h2>
-                        <p>Clita nonumy sanctus nonumy et clita tempor, et sea amet ut et sadipscing rebum amet takimata amet, sed accusam eos eos dolores dolore et. Et ea ea dolor rebum invidunt clita eos. Sea accusam stet stet ipsum, sit ipsum et ipsum kasd</p>
-                        <p>Et ea ea dolor rebum invidunt clita eos. Sea accusam stet stet ipsum, sit ipsum et ipsum kasd</p>
-                    </div>
-                    <div class="col-lg-7">
-                        <div class="row g-5">
-                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.1s">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
-                                        <i class="fa fa-cubes text-white"></i>
-                                    </div>
-                                    <h6 class="mb-0">Best In Industry</h6>
-                                </div>
-                                <span>Magna sea eos sit dolor, ipsum amet ipsum lorem diam eos diam dolor</span>
-                            </div>
-                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.2s">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
-                                        <i class="fa fa-percent text-white"></i>
-                                    </div>
-                                    <h6 class="mb-0">99% Success Rate</h6>
-                                </div>
-                                <span>Magna sea eos sit dolor, ipsum amet ipsum lorem diam eos diam dolor</span>
-                            </div>
-                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.3s">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
-                                        <i class="fa fa-award text-white"></i>
-                                    </div>
-                                    <h6 class="mb-0">Award Winning</h6>
-                                </div>
-                                <span>Magna sea eos sit dolor, ipsum amet ipsum lorem diam eos diam dolor</span>
-                            </div>
-                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.4s">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
-                                        <i class="fa fa-smile-beam text-white"></i>
-                                    </div>
-                                    <h6 class="mb-0">100% Happy Client</h6>
-                                </div>
-                                <span>Magna sea eos sit dolor, ipsum amet ipsum lorem diam eos diam dolor</span>
-                            </div>
-                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.5s">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
-                                        <i class="fa fa-user-tie text-white"></i>
-                                    </div>
-                                    <h6 class="mb-0">Professional Advisors</h6>
-                                </div>
-                                <span>Magna sea eos sit dolor, ipsum amet ipsum lorem diam eos diam dolor</span>
-                            </div>
-                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.6s">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
-                                        <i class="fa fa-headset text-white"></i>
-                                    </div>
-                                    <h6 class="mb-0">24/7 Customer Support</h6>
-                                </div>
-                                <span>Magna sea eos sit dolor, ipsum amet ipsum lorem diam eos diam dolor</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Features End -->
+                
+                        <h2 class="mb-4 info-title mleft">결과^^</h2>
 
-        <div class="container-xxl py-6">
-            <div class="container">
-                <div class="row g-5">
-                    <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="d-inline-block border rounded-pill text-primary px-4 mb-3">결과 영상</div>
-                        <h2 class="mb-4">Why People Choose Us? We Are Trusted & Award Wining Agency</h2>
-                        <p>Clita nonumy sanctus nonumy et clita tempor, et sea amet ut et sadipscing rebum amet takimata amet, sed accusam eos eos dolores dolore et. Et ea ea dolor rebum invidunt clita eos. Sea accusam stet stet ipsum, sit ipsum et ipsum kasd</p>
-                        <p>Et ea ea dolor rebum invidunt clita eos. Sea accusam stet stet ipsum, sit ipsum et ipsum kasd</p>
                     </div>
                     <div class="col-lg-7">
                         <div class="row g-5">
                             <video controls width="1200" >                
-                                <source src="{% static 'video/CCTV_20220523_203111960.mp4' %}" type="video/mp4">   <!-- 결과 영상 들어갈곳  -->
+                                <source src="{% static 'video/sample_cctv.mp4' %}" type="video/mp4">   <!-- 결과 영상 들어갈곳  -->
                                 Sorry, your browser doesn't support embedded videos.
                             </video>
                         </div>
@@ -279,6 +172,69 @@
             </div>
         </div>
 
+        <hr width="100%">
+        <!-- Features Start -->
+        <div class="container-xxl py-6">
+            <div class="container">
+                <div class="row g-5">
+                    <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.1s">
+ 
+                        <h2 class="mb-4 info-title mleft">기대효과</h2>
+                        <p></p>
+                        
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="row g-5">
+                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.1s">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
+                                        <i class="fa fa-sack-dollar text-white"></i>
+                                    </div>
+                                    <h6 class="mb-0">비용 절감</h6>
+                                </div>
+                                <div class="ms-4">
+                                    <span>AI 자동화 기술로 모자이크 처리에 드는 비용을 절감할 수 있습니다.</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.2s">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
+                                        <i class="fa fa-stopwatch text-white"></i>
+                                    </div>
+                                    <h6 class="mb-0">시간 단축</h6>
+                                </div>
+                                <div class="ms-4">
+                                    <span>시간 단축 가능</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.3s">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
+                                        <i class="fa fa-award text-white"></i>
+                                    </div>
+                                    <h6 class="mb-0"></h6>
+                                </div>
+                                <div class="ms-4">
+                                    <span>Magna sea eos sit dolor, ipsum amet ipsum lorem diam eos diam dolor</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.4s">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="flex-shrink-0 btn-square bg-primary rounded-circle me-3">
+                                        <i class="fa-solid fa-arrows-up-down-left-right text-white"></i>
+                                    </div>
+                                    <h6 class="mb-0">다양한 분야 활용 가능</h6>
+                                </div>
+                                <div class="ms-4">
+                                    <span>cctv 뿐만 아니라 개인정보를 침해가 발생할 수 있는 다양한 분야에서 사용할 수 있습니다. </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Features End -->
 
 
 

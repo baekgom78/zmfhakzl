@@ -34,7 +34,7 @@
 }
 
 .py-6 {
-    padding-top: 6rem;
+    padding-top: 3rem;
     padding-bottom: 6rem;
 }
 
@@ -435,4 +435,37 @@
     margin-right: 0;
     padding-right: 0;
     border-right: none;
+}
+
+@font-face {
+    font-family: "NanumSquareR";
+    src: local("NanumSquareR"),
+    url("{% static 'assets/fonts/NanumSquareR.ttf' %}") format("opentype");
+}
+@font-face {
+    font-family: "NanumSquareEB";
+    src: local("NanumSquareEB"),
+    url("{% static 'assets/fonts/NanumSquareEB.otf' %}") format("opentype");
+}
+@font-face {
+    font-family: "NanumSquareB";
+    src: local("NanumSquareB"),
+    url("{% static 'assets/fonts/NanumSquareB.otf' %}") format("opentype");
+}
+@font-face {
+    font-family: "NanumSquareR";
+    src: local("NanumSquareR"),
+    url("{% static 'assets/fonts/NanumSquareR.otf' %}") format("opentype");
+}
+@font-face {
+    font-family: 'ROKAFSansBold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts2201-3@1.0/ROKAFSansBold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'ROKAFSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts2201-3@1.0/ROKAFSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
