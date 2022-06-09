@@ -984,7 +984,7 @@ function labelTag(){
            
         for(i=1;i<9;i++)
         {
-            var predictedimg = response.data["video-frame-" + i + ".png"]
+            var predictedimg = response.data.origin_data["video-frame-" + i + ".png"]
             if(response.data.length == 0){
                 alert("예측된 이미지를 못 가져왔어요. 다시 시도해주세요.");
                 return;
